@@ -1,0 +1,146 @@
+.main_box {
+    height: 100;
+    overflow-X: hidden;
+    overflow-Y: hidden;
+}
+
+.header_box {
+    height: 20%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.logoImageSize {
+    height: 75px;
+    width: 160px;
+}
+
+.message_box {
+    height: 15%;
+}
+
+.login_box {
+    height: 100%;
+    vertical-align: middle;
+    width: 90%;
+}
+
+.logout_box {
+
+}
+
+.textField {
+    width: 80%;
+}
+
+.mask {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.bg-image {
+    background-image: url("../../icons/sportsday.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.input-group {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    margin-bottom: 20px !important;
+    display: table-cell;
+    position: relative;
+    z-index: 2;
+    float: left;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.input-group-addon {
+    border-width: 0 0 1px;
+    min-width: 42px;
+    padding: 20px 12px;
+    font-size: 10px;
+    font-weight: 300;
+    line-height: 1;
+    color: #2e353b;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 0;
+}
+
+.input-lg {
+    height: 40px;
+    line-height: 1.3333333;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.fg-line {
+    position: relative;
+    vertical-align: top;
+    width: 90%;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 255);
+}
+
+.login-heading {
+    font-weight: 300;
+}
+
+.btn-login {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+}
+
+.invalid {
+    border-color: red !important;
+}
+
+.landscape {
+    height: 130px;
+    width: 280px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.new-expense__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    text-align: left;
+    padding-left: 90px;
+}
+
+.new-expense__control label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.new-expense__control input {
+    font: inherit;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 22rem;
+    max-width: 100%;
+}
+
+.new-expense__actions {
+    text-align: center;
+}
