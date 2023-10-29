@@ -5,15 +5,6 @@ import MessageConstants from "../constants/MessageConstants";
 import EventCard from "./EventCard";
 
 function EventComponent(props) {
-    const [cardState, setCardState] = React.useState([]);
-
-    React.useEffect(() => {
-
-        console.log("wewerwer",props.events)
-        // setCardState();
-
-    }, [MessageConstants.CURRENT_USER]);
-
     return (
         <>
 
@@ -25,11 +16,27 @@ function EventComponent(props) {
                             className=" text-center">{props.titletext}</h4>
                     </div>
                     <div style={{paddingLeft:100}}>
-                        {props.events.map((event, index) =>
+                        {props.eligibleEvents.map((event, index) =>
                             (<EventCard
                                 data={event}
                                 index={event.eventId}
-                                cardstate={props.cardstate}
+                                cardstate={"Eligible"}
+                                selectClick={props.selectClick}
+                                removeClick={props.removeClick}
+                            />))}
+                        {props.nonEligibleEvents.map((event, index) =>
+                            (<EventCard
+                                data={event}
+                                index={event.eventId}
+                                cardstate={"Non-Eligible"}
+                                selectClick={props.selectClick}
+                                removeClick={props.removeClick}
+                            />))}
+                        {props.selectedEvents.map((event, index) =>
+                            (<EventCard
+                                data={event}
+                                index={event.eventId}
+                                cardstate={"Selected"}
                                 selectClick={props.selectClick}
                                 removeClick={props.removeClick}
                             />))}

@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import ApiServices from "../constants/ApiServices";
 import UrlConstants from "../constants/UrlConstants";
 import UtilService from "../util/UtilService";
+import moment from "moment";
 
 function EventCard(props) {
 
@@ -15,7 +16,7 @@ function EventCard(props) {
     React.useEffect(() => {
         setCurrentEventData(props.data);
         setIndex(props.index);
-        if(props.cardstate==="Eligible"){
+        if(props.cardstate!=="Selected"){
             setCardState("Select");
         }else{
             setCardState("Remove");
@@ -30,14 +31,22 @@ function EventCard(props) {
         }
     }
 
+    const convertTimeToHumanReadable = (time) => {
+        return moment(time, 'YYYY-MM-DD hh:mm:ss').format('hh:mm A')
+        // return moment(time, 'YYYY-MM-DD hh:mm:ss').format('hh:mm A DD-MMM-YY')
+    }
+
+
     return (
-        <Card style={{width: 400}}>
+        <Card style={{width: 300}}>
             <div>
                 <h2>{currentEventData.eventName}</h2>
                 <h3>{currentEventData.eventCategory}</h3>
-                <h4>{currentEventData.startTime} - {currentEventData.endTime}</h4>
+                <h4>{convertTimeToHumanReadable(currentEventData.startTime)} - {convertTimeToHumanReadable(currentEventData.endTime)}</h4>
+
             </div>
             <Button
+                disabled = {props.cardstate === "Non-Eligible"}
                 style={{
                     margin: "5px",
                     borderRadius: 8,

@@ -11,6 +11,35 @@ import MessageConstants from "../constants/MessageConstants";
 import {ToastContainer} from "react-toastify";
 
 
+function dataNotPresentInSelectedEvents(event, selectedEventsData) {
+    let present = true
+    selectedEventsData.forEach(selectedEvent => {
+        if (selectedEvent.eventId === event.eventId) {
+            present = false;
+        }
+    })
+    return present;
+}
+
+function timingClashingWithSelectedEvents(event, selectedEvents) {
+    let timeClashed = false;
+    //  e.start e.end   S.Start S.end     NOT CLASING
+    //  e.start    S.Start S.end   e.end
+    //  e.start    S.Start  e.end   S.end
+
+
+    //  S.Start e.start e.end   S.end
+    //  S.Start e.start    S.end e.end
+    //  S.Start  S.end e.start e.end    NOT CLASING
+    selectedEvents.forEach(selectedEvent => {
+        if (!((event.endTime < selectedEvent.startTime) || (selectedEvent.endTime < event.startTime)))
+            timeClashed = true;
+    })
+
+
+    return timeClashed;
+}
+
 function EventMainPage(props) {
 
     const Item = styled(Paper)(({theme}) => ({
@@ -22,7 +51,9 @@ function EventMainPage(props) {
     }));
 
     const mainPanel = React.useRef(null);
+    const [masterEvents, setMasterEvents] = React.useState([]);
     const [eligibleEvents, setEligibleEvents] = React.useState([]);
+    const [nonEligibleEvents, setNonEligibleEvents] = React.useState([]);
     const [selectedEvents, setSelectedEvents] = React.useState([]);
 
     React.useEffect(() => {
@@ -39,14 +70,38 @@ function EventMainPage(props) {
 
         ApiServices.getDetailsWithoutRequestParams(UrlConstants.GET_ALL_EVENTS)
             .then((response) => {
-                if(response.data.message.event)
-                setEligibleEvents(response.data.message.event);
+                if (response.data.message.event)
+                    setMasterEvents(response.data.message.event);
             })
             .catch((error) => {
                 UtilService.handleError("Data not found");
             });
 
     }, [MessageConstants.CURRENT_USER]);
+
+    React.useEffect(() => {
+        let eligibleEventsData = [];
+        if (selectedEvents.length === 0) {
+            setEligibleEvents(masterEvents);
+            return;
+        }
+
+        let nonEligibleEventsData = []
+        masterEvents.forEach(event => {
+            if (dataNotPresentInSelectedEvents(event, selectedEvents)) {
+                if (timingClashingWithSelectedEvents(event, selectedEvents)) {
+                    nonEligibleEventsData.push(event);
+                } else {
+                    eligibleEventsData.push(event);
+                }
+
+            }
+        })
+        setNonEligibleEvents(nonEligibleEventsData);
+        setEligibleEvents(eligibleEventsData);
+
+
+    }, [selectedEvents]);
 
     const selectClick = (index) => {
         if (selectedEvents.length >= 3) {
@@ -56,24 +111,18 @@ function EventMainPage(props) {
         var newSelectedEvent = eligibleEvents.filter(obj => {
             return obj.eventId === index;
         });
-        setSelectedEvents([...selectedEvents, newSelectedEvent[0]]);
-
-
-        var listAfterRemoval = eligibleEvents.filter(obj => {
-            return obj.eventId !== index;
-        });
-        setEligibleEvents(listAfterRemoval);
 
         const registerEventPayload = {
             userId: MessageConstants.CURRENT_USER,
-            eventId:newSelectedEvent[0].eventId,
-            eventName:newSelectedEvent[0].eventName,
-            startTime:newSelectedEvent[0].startTime,
-            endTime:newSelectedEvent[0].endTime
+            eventId: newSelectedEvent[0].eventId,
+            eventName: newSelectedEvent[0].eventName,
+            startTime: newSelectedEvent[0].startTime,
+            endTime: newSelectedEvent[0].endTime
         };
         ApiServices.postWithRequestParams(UrlConstants.REGISTER_EVENT, registerEventPayload)
             .then((response) => {
-
+                setSelectedEvents([...selectedEvents, newSelectedEvent[0]]);
+                UtilService.handleInfo("Event registered successfully");
             })
             .catch((error) => {
                 UtilService.handleError("Data not found");
@@ -84,21 +133,15 @@ function EventMainPage(props) {
         var listAfterRemoval = selectedEvents.filter(obj => {
             return obj.eventId !== index;
         });
-        setSelectedEvents(listAfterRemoval);
-
-        var newSelectedEvent = selectedEvents.filter(obj => {
-            return obj.eventId === index;
-        });
-        setEligibleEvents([...eligibleEvents, newSelectedEvent[0]]);
-
 
         const unregisterEventPayload = {
             userId: MessageConstants.CURRENT_USER,
-            eventId:index
+            eventId: index
         };
         ApiServices.postWithRequestParams(UrlConstants.UNREGISTER_EVENT, unregisterEventPayload)
             .then((response) => {
-
+                setSelectedEvents(listAfterRemoval);
+                UtilService.handleInfo("Event De-Registered successfully");
             })
             .catch((error) => {
                 UtilService.handleError("Data not found");
@@ -116,8 +159,9 @@ function EventMainPage(props) {
                                     <Item>
                                         <EventComponent
                                             titletext={MessageConstants.ALL_EVENTS}
-                                            events={eligibleEvents}
-                                            cardstate={"Eligible"}
+                                            eligibleEvents={eligibleEvents}
+                                            nonEligibleEvents={nonEligibleEvents}
+                                            selectedEvents={[]}
                                             selectClick={selectClick}
                                         />
                                     </Item>
@@ -126,8 +170,9 @@ function EventMainPage(props) {
                                     <Item>
                                         <EventComponent
                                             titletext={MessageConstants.SELECTED_EVENTS}
-                                            events={selectedEvents}
-                                            cardstate={"Selected"}
+                                            selectedEvents={selectedEvents}
+                                            eligibleEvents={[]}
+                                            nonEligibleEvents={[]}
                                             removeClick={removeClick}
                                         />
                                     </Item>
