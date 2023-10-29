@@ -1,10 +1,10 @@
 import React from "react";
-import {Card} from "react-bootstrap";
 import MessageConstants from "../constants/MessageConstants";
+import Card from '@mui/material/Card';
 import Button from "@mui/material/Button";
-import ApiServices from "../constants/ApiServices";
-import UrlConstants from "../constants/UrlConstants";
-import UtilService from "../util/UtilService";
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { CardActionArea, CardActions} from '@mui/material';
 import moment from "moment";
 
 function EventCard(props) {
@@ -16,18 +16,18 @@ function EventCard(props) {
     React.useEffect(() => {
         setCurrentEventData(props.data);
         setIndex(props.index);
-        if(props.cardstate!=="Selected"){
+        if (props.cardstate !== "Selected") {
             setCardState("Select");
-        }else{
+        } else {
             setCardState("Remove");
         }
     }, [MessageConstants.CURRENT_USER]);
 
     const onButtonClick = () => {
         if (props.cardstate === "Eligible") {
-            props.selectClick(props.index)
+            props.selectClick(index)
         } else {
-            props.removeClick(props.index)
+            props.removeClick(index)
         }
     }
 
@@ -38,24 +38,28 @@ function EventCard(props) {
 
 
     return (
-        <Card style={{width: 300}}>
-            <div>
-                <h2>{currentEventData.eventName}</h2>
-                <h3>{currentEventData.eventCategory}</h3>
-                <h4>{convertTimeToHumanReadable(currentEventData.startTime)} - {convertTimeToHumanReadable(currentEventData.endTime)}</h4>
-
-            </div>
-            <Button
-                disabled = {props.cardstate === "Non-Eligible"}
-                style={{
-                    margin: "5px",
-                    borderRadius: 8,
-                    border: "red",
-                }} onClick={onButtonClick}>
-                {cardState}
-            </Button>
-
+        <Card sx={{width: 300}}>
+            <CardActionArea>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                        {currentEventData.eventName}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {currentEventData.eventCategory}
+                        <br></br>
+                        {convertTimeToHumanReadable(currentEventData.startTime)} - {convertTimeToHumanReadable(currentEventData.endTime)}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+            <CardActions>
+                <Button size="small" color="primary" disabled = {props.cardstate === "Non-Eligible"} onClick={onButtonClick}>
+                    {cardState}
+                </Button>
+            </CardActions>
         </Card>
+
+
+
     );
 }
 
