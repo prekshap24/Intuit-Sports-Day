@@ -21,6 +21,29 @@ function dataNotPresentInSelectedEvents(event, selectedEventsData) {
     return present;
 }
 
+
+function sortAccordingToTime(events) {
+
+    events.sort((a, b) => {
+
+        if (a.startTime < b.startTime) {
+            return -1;
+        }
+        if (a.startTime > b.startTime) {
+            return 1;
+        }
+
+        if (a.endTime < b.endTime) {
+            return -1;
+        }
+        if (a.endTime > b.endTime) {
+            return -1;
+        }
+        return 0;
+    });
+    return events;
+}
+
 function timingClashingWithSelectedEvents(event, selectedEvents) {
     let timeClashed = false;
     //  e.start e.end   S.Start S.end     NOT CLASING
@@ -62,7 +85,7 @@ function EventMainPage(props) {
         };
         ApiServices.getDetailsRequestParams(UrlConstants.GET_REGISTERED_EVENTS, payload)
             .then((response) => {
-                setSelectedEvents(response.data.message.events);
+                setSelectedEvents(sortAccordingToTime(response.data.message.events));
             })
             .catch((error) => {
                 UtilService.handleError("Data not found");
@@ -71,7 +94,7 @@ function EventMainPage(props) {
         ApiServices.getDetailsWithoutRequestParams(UrlConstants.GET_ALL_EVENTS)
             .then((response) => {
                 if (response.data.message.event)
-                    setMasterEvents(response.data.message.event);
+                    setMasterEvents(sortAccordingToTime(response.data.message.event));
             })
             .catch((error) => {
                 UtilService.handleError("Data not found");
@@ -82,6 +105,7 @@ function EventMainPage(props) {
     React.useEffect(() => {
         let eligibleEventsData = [];
         if (selectedEvents.length === 0) {
+            setNonEligibleEvents([]);
             setEligibleEvents(masterEvents);
             return;
         }
@@ -97,8 +121,9 @@ function EventMainPage(props) {
 
             }
         })
-        setNonEligibleEvents(nonEligibleEventsData);
-        setEligibleEvents(eligibleEventsData);
+        setSelectedEvents(sortAccordingToTime(selectedEvents));
+        setNonEligibleEvents(sortAccordingToTime(nonEligibleEventsData));
+        setEligibleEvents(sortAccordingToTime(eligibleEventsData));
 
 
     }, [selectedEvents]);
