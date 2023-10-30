@@ -55,7 +55,7 @@ function timingClashingWithSelectedEvents(event, selectedEvents) {
     //  S.Start e.start    S.end e.end
     //  S.Start  S.end e.start e.end    NOT CLASING
     selectedEvents.forEach(selectedEvent => {
-        if (!((event.endTime < selectedEvent.startTime) || (selectedEvent.endTime < event.startTime)))
+        if (!((event.endTime <= selectedEvent.startTime) || (selectedEvent.endTime <= event.startTime)))
             timeClashed = true;
     })
 
